@@ -16,6 +16,10 @@ const config = {
     GCP_CX: process.env.GOOGLE_APPLICATION_CX
 }
 
+async function analyzeSearchResults() {
+    //TODO
+}
+
 //endpoints
 
 app.post('/postText', async (req, res) => {
@@ -60,7 +64,7 @@ app.post('/postText', async (req, res) => {
         // res.status(200).send(result);
         res.status(200).send(data);
         })
-        
+
     } catch (err) {
         console.log(err);
         res.status(500).send(err);
