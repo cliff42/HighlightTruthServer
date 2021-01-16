@@ -25,6 +25,7 @@ export default {
     setup() {
         const text = ref('');
         const message = ref('');
+        const severity = ref('');
 
         async function onSubmit() {
             var formData = {
@@ -45,6 +46,7 @@ export default {
         return {
             text,
             message,
+            severity,
             onSubmit
         };
     }
