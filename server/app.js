@@ -37,15 +37,15 @@ app.post('/postText', async (req, res) => {
             cx: config.GCP_CX,
             q, start, num
         })
-    
+
         .then(result => result.data)
         .then((result) => {
         const { queries, items, searchInformation } = result;
-    
+
         const page = (queries.request || [])[0] || {};
         const previousPage = (queries.previousPage || [])[0] || {};
         const nextPage = (queries.nextPage || [])[0] || {};
-    
+
         const data = {
             q,
             totalResults: page.totalResults,
@@ -55,7 +55,7 @@ app.post('/postText', async (req, res) => {
             previousPage: previousPage.startIndex,
             time: searchInformation.searchTime,
             items: items.map(o => ({
-            link: o.link,
+            sitename: o.pagemap.metatags[0]["og:site_name"],
             title: o.title,
             snippet: o.snippet,
             img: (((o.pagemap || {}).cse_image || {})[0] || {}).src
