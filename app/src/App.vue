@@ -1,13 +1,15 @@
 <template>
   <div id="app">
+  <!--
     <div id="nav">
       <b-navbar toggleable="lg" type="light" variant="light">
-        <b-nav-item active-class="active" class="nav-link" v-for="route in links" 
+        <b-nav-item active-class="active" class="nav-link" v-for="route in links"
                     :key="route.path" :to="route.path" >
-          {{ route.name }} 
+          {{ route.name }}
         </b-nav-item>
       </b-navbar>
     </div>
+    --->
     <router-view/>
   </div>
 </template>
@@ -19,7 +21,7 @@ export default {
   name: 'App',
   setup() {
     const links = ref([]);
-    
+
     links.value = [
       {
         name: 'Home',
