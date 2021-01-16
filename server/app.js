@@ -8,6 +8,8 @@ app.use(cors());
 
 const GCP_API_KEY = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
+//endpoints
+
 app.post('/postText', async (req, res) => {
     try {
         res.status(200).send(
@@ -16,7 +18,7 @@ app.post('/postText', async (req, res) => {
     } catch (err) {
         console.log(err);
     }
-})
+});
 
 
 // ----------------------------------------------------------------------------------------
