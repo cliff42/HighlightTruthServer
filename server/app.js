@@ -56,9 +56,7 @@ app.post('/postText', async (req, res) => {
             time: searchInformation.searchTime,
             items: items.map(o => ({
             sitename: o.pagemap.metatags[0]["og:site_name"],
-            title: o.title,
-            snippet: o.snippet,
-            img: (((o.pagemap || {}).cse_image || {})[0] || {}).src
+            twitter_name: o.pagemap.metatags[0]["twitter:app:name:googleplay"],
             }))
         }
         // res.status(200).send(result);
