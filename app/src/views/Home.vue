@@ -29,13 +29,13 @@ export default {
 
         async function onSubmit() {
             var formData = {
-                "text": text.value,
+                "q": text.value,
+                "start": 1,
+                "num": 10
             }
 
-            console.log(formData);
-
             try {
-                await axios.post('http://localhost:4000/postText', formData);
+                console.log(await axios.post('http://localhost:4000/postText', formData));
                 message.value = 'Test Text';
             } catch (err) {
                 console.log(err);
