@@ -11,17 +11,16 @@ app.use(bodyParser.json());
 
 const customsearch = google.customsearch('v1');
 
-var data = {};
+let data = {};
 
 const config = {
     GCP_API_KEY: process.env.GOOGLE_APPLICATION_CREDENTIALS,
     GCP_CX: process.env.GOOGLE_APPLICATION_CX
 }
 
-async function analyzeSearchResults() {
+function analyzeSearchResults() {
     //TODO
-    console.log(this.data);
-    return 10;
+    console.log(data);
 }
 
 async function getResult(req) {
@@ -30,13 +29,12 @@ async function getResult(req) {
     const query = req.body.q;
 
     for(i = 0; i < 10; i++) {
-        getData(query, startNum);
+        await getData(query, startNum);
         goodHits += analyzeSearchResults();
         startNum += 10;
     }
     // DO CALCULATIONS HERE
     //console.log(goodHits);
-    return goodHits;
 }
 
 async function getData(query, begin) {
@@ -46,36 +44,40 @@ async function getData(query, begin) {
     const num = 10;
     console.log(q, start, num);
 
-    customsearch.cse.list({
-        auth: config.GCP_API_KEY,
-        cx: config.GCP_CX,
-        q, start, num
-    })
+    try {
 
-    .then(result => result.data)
-    .then((result) => {
-    const { queries, items, searchInformation } = result;
+        await customsearch.cse.list({
+            auth: config.GCP_API_KEY,
+            cx: config.GCP_CX,
+            q, start, num
+        })
 
-    const page = (queries.request || [])[0] || {};
-    const previousPage = (queries.previousPage || [])[0] || {};
-    const nextPage = (queries.nextPage || [])[0] || {};
+        .then(result => result.data)
+        .then((result) => {
+        const { queries, items, searchInformation } = result;
 
-    this.data = {
-        q,
-        totalResults: page.totalResults,
-        count: page.count,
-        startIndex: page.startIndex,
-        nextPage: nextPage.startIndex,
-        previousPage: previousPage.startIndex,
-        time: searchInformation.searchTime,
-        items: items.map(o => ({
-        sitename: o.pagemap.metatags[0]["og:site_name"],
-        twitter_name: o.pagemap.metatags[0]["twitter:app:name:googleplay"],
-        }))
+        const page = (queries.request || [])[0] || {};
+        const previousPage = (queries.previousPage || [])[0] || {};
+        const nextPage = (queries.nextPage || [])[0] || {};
+
+        data = {
+            q,
+            totalResults: page.totalResults,
+            count: page.count,
+            startIndex: page.startIndex,
+            nextPage: nextPage.startIndex,
+            previousPage: previousPage.startIndex,
+            time: searchInformation.searchTime,
+            items: items.map(o => ({
+            sitename: o.pagemap.metatags[0]["og:site_name"],
+            twitter_name: o.pagemap.metatags[0]["twitter:app:name:googleplay"],
+            }))
+        }
+        })
+    } catch (err) {
+        console.log(err);
     }
-    // res.status(200).send(result);
-    //console.log(data);
-    })
+    // console.log(data);
 }
 
 //endpoints
