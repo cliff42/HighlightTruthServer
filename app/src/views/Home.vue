@@ -35,8 +35,8 @@ export default {
             }
 
             try {
-                console.log(await axios.post('http://localhost:4000/postText', formData));
-                message.value = 'Test Text';
+                var msg = await axios.post('http://localhost:4000/postText', formData);
+                message.value = msg.data.value;
             } catch (err) {
                 console.log(err);
                 message.value = err;
