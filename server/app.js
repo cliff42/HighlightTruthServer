@@ -12,6 +12,7 @@ app.use(bodyParser.json());
 const customsearch = google.customsearch('v1');
 
 let data = {};
+let hits = {value: -1};
 
 const sources = ["CNN", "NYTimes", "AP NEWS" , "Washington Post", "BBC News", "CBC", "Snopes.com"];
 
@@ -34,13 +35,13 @@ function searchSources(sitename, twitter_name) {
 
 function analyzeSearchResults() {
     //TODO
-    var hits = 0;
+    var goodHits = 0;
     for(v of data.items){
         if (searchSources(v.sitename, v.twitter_name)) {
-            hits++;
+            goodHits++;
         }
     }
-    return hits;
+    return goodHits;
 }
 
 async function getResult(req) {
@@ -58,20 +59,18 @@ async function getResult(req) {
     // DO CALCULATIONS HERE
     console.log(goodHits);
     var percentage = goodHits/numArticles;
-    var result;
     if (percentage <= 0.2) {
-        result = 0;
+        hits.value = 0;
     } else if (percentage <= 0.4) {
-        result = 1;
+        hits.value = 1;
     } else if (percentage <= 0.6) {
-        result = 2;
+        hits.value = 2;
     } else if (percentage <= 0.8) {
-        result = 3;
+        hits.value = 3;
     } else {
-        result = 4;
+        hits.value = 4;
     }
-    console.log(result);
-    return result;
+    console.log(hits.value);
 }
 
 async function getData(query, begin) {
@@ -125,7 +124,8 @@ app.post('/postText', async (req, res) => {
     console.log(req.body);
 
     try {
-        res.status(200).send(getResult(req));
+        await getResult(req);
+        res.status(200).send(hits);
     } catch (err) {
         console.log(err);
         res.status(500).send(err);
