@@ -13,28 +13,65 @@ const customsearch = google.customsearch('v1');
 
 let data = {};
 
+const sources = ["CNN", "NYTimes", "AP NEWS" , "Washington Post", "BBC News", "CBC", "Snopes.com"];
+
 const config = {
     GCP_API_KEY: process.env.GOOGLE_APPLICATION_CREDENTIALS,
     GCP_CX: process.env.GOOGLE_APPLICATION_CX
 }
 
+function searchSources(sitename, twitter_name) {
+    for(s of sources) {
+        if (sitename != null && sitename.includes(s)) {
+            return true;
+        }
+        if (twitter_name != null && twitter_name.includes(s)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function analyzeSearchResults() {
     //TODO
-    console.log(data);
+    var hits = 0;
+    for(v of data.items){
+        if (searchSources(v.sitename, v.twitter_name)) {
+            hits++;
+        }
+    }
+    return hits;
 }
 
 async function getResult(req) {
     var goodHits = 0;
     var startNum = 1;
     const query = req.body.q;
+    const numArticles = 100;
 
     for(i = 0; i < 10; i++) {
         await getData(query, startNum);
+        //console.log(data);
         goodHits += analyzeSearchResults();
         startNum += 10;
     }
     // DO CALCULATIONS HERE
-    //console.log(goodHits);
+    console.log(goodHits);
+    var percentage = goodHits/numArticles;
+    var result;
+    if (percentage <= 0.2) {
+        result = 0;
+    } else if (percentage <= 0.4) {
+        result = 1;
+    } else if (percentage <= 0.6) {
+        result = 2;
+    } else if (percentage <= 0.8) {
+        result = 3;
+    } else {
+        result = 4;
+    }
+    console.log(result);
+    return result;
 }
 
 async function getData(query, begin) {
@@ -71,10 +108,12 @@ async function getData(query, begin) {
             items: items.map(o => ({
             sitename: o.pagemap.metatags[0]["og:site_name"],
             twitter_name: o.pagemap.metatags[0]["twitter:app:name:googleplay"],
+            snippet: o.snippet,
             }))
         }
         })
     } catch (err) {
+        data = {};
         console.log(err);
     }
     // console.log(data);
