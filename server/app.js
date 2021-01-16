@@ -11,6 +11,8 @@ app.use(bodyParser.json());
 
 const customsearch = google.customsearch('v1');
 
+var data = {};
+
 const config = {
     GCP_API_KEY: process.env.GOOGLE_APPLICATION_CREDENTIALS,
     GCP_CX: process.env.GOOGLE_APPLICATION_CX
@@ -18,6 +20,62 @@ const config = {
 
 async function analyzeSearchResults() {
     //TODO
+    console.log(this.data);
+    return 10;
+}
+
+async function getResult(req) {
+    var goodHits = 0;
+    var startNum = 1;
+    const query = req.body.q;
+
+    for(i = 0; i < 10; i++) {
+        getData(query, startNum);
+        goodHits += analyzeSearchResults();
+        startNum += 10;
+    }
+    // DO CALCULATIONS HERE
+    //console.log(goodHits);
+    return goodHits;
+}
+
+async function getData(query, begin) {
+    //console.log(query);
+    const q = query;
+    const start = begin;
+    const num = 10;
+    console.log(q, start, num);
+
+    customsearch.cse.list({
+        auth: config.GCP_API_KEY,
+        cx: config.GCP_CX,
+        q, start, num
+    })
+
+    .then(result => result.data)
+    .then((result) => {
+    const { queries, items, searchInformation } = result;
+
+    const page = (queries.request || [])[0] || {};
+    const previousPage = (queries.previousPage || [])[0] || {};
+    const nextPage = (queries.nextPage || [])[0] || {};
+
+    this.data = {
+        q,
+        totalResults: page.totalResults,
+        count: page.count,
+        startIndex: page.startIndex,
+        nextPage: nextPage.startIndex,
+        previousPage: previousPage.startIndex,
+        time: searchInformation.searchTime,
+        items: items.map(o => ({
+        sitename: o.pagemap.metatags[0]["og:site_name"],
+        twitter_name: o.pagemap.metatags[0]["twitter:app:name:googleplay"],
+        }))
+    }
+    // res.status(200).send(result);
+    //console.log(data);
+    })
 }
 
 //endpoints
@@ -25,44 +83,8 @@ async function analyzeSearchResults() {
 app.post('/postText', async (req, res) => {
     console.log(req.body);
 
-    const q = req.body.q;
-    const start = req.body.start;
-    const num = req.body.num;
-
-    console.log(q, start, num);
-
     try {
-        customsearch.cse.list({
-            auth: config.GCP_API_KEY,
-            cx: config.GCP_CX,
-            q, start, num
-        })
-
-        .then(result => result.data)
-        .then((result) => {
-        const { queries, items, searchInformation } = result;
-
-        const page = (queries.request || [])[0] || {};
-        const previousPage = (queries.previousPage || [])[0] || {};
-        const nextPage = (queries.nextPage || [])[0] || {};
-
-        const data = {
-            q,
-            totalResults: page.totalResults,
-            count: page.count,
-            startIndex: page.startIndex,
-            nextPage: nextPage.startIndex,
-            previousPage: previousPage.startIndex,
-            time: searchInformation.searchTime,
-            items: items.map(o => ({
-            sitename: o.pagemap.metatags[0]["og:site_name"],
-            twitter_name: o.pagemap.metatags[0]["twitter:app:name:googleplay"],
-            }))
-        }
-        // res.status(200).send(result);
-        res.status(200).send(data);
-        })
-
+        res.status(200).send(getResult(req));
     } catch (err) {
         console.log(err);
         res.status(500).send(err);
