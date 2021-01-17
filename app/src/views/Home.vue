@@ -34,6 +34,8 @@ export default {
                 "num": 10
             }
 
+            message.value = 'Searching...';
+
             try {
                 var msg = await axios.post('http://localhost:4000/postText', formData);
                 message.value = msg.data.value;

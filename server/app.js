@@ -36,10 +36,15 @@ function searchSources(sitename, twitter_name) {
 function analyzeSearchResults() {
     //TODO
     var goodHits = 0;
-    for(v of data.items){
-        if (searchSources(v.sitename, v.twitter_name)) {
-            goodHits++;
+    console.log(data);
+    if (!data.bad) {
+        for(v of data.items){
+            if (searchSources(v.sitename, v.twitter_name)) {
+                goodHits++;
+            }
         }
+    } else {
+        goodHits = -1;
     }
     return goodHits;
 }
@@ -59,7 +64,9 @@ async function getResult(req) {
     // DO CALCULATIONS HERE
     console.log(goodHits);
     var percentage = goodHits/numArticles;
-    if (percentage <= 0.2) {
+    if (percentage < 0.0) {
+        hits.value = 'No Data - Please Enter Something Else';
+    } else if (percentage <= 0.2) {
         hits.value = 0;
     } else if (percentage <= 0.4) {
         hits.value = 1;
@@ -96,23 +103,28 @@ async function getData(query, begin) {
         const previousPage = (queries.previousPage || [])[0] || {};
         const nextPage = (queries.nextPage || [])[0] || {};
 
-        data = {
-            q,
-            totalResults: page.totalResults,
-            count: page.count,
-            startIndex: page.startIndex,
-            nextPage: nextPage.startIndex,
-            previousPage: previousPage.startIndex,
-            time: searchInformation.searchTime,
-            items: items.map(o => ({
-            sitename: o.pagemap.metatags[0]["og:site_name"],
-            twitter_name: o.pagemap.metatags[0]["twitter:app:name:googleplay"],
-            snippet: o.snippet,
-            }))
+        if (items != undefined) {
+            data = {
+                q,
+                bad: false,
+                totalResults: page.totalResults,
+                count: page.count,
+                startIndex: page.startIndex,
+                nextPage: nextPage.startIndex,
+                previousPage: previousPage.startIndex,
+                time: searchInformation.searchTime,
+                items: items.map(o => ({
+                sitename: o.pagemap.metatags[0]["og:site_name"],
+                twitter_name: o.pagemap.metatags[0]["twitter:app:name:googleplay"],
+                snippet: o.snippet,
+                }))
+            };
+        } else {
+            data = {bad: true};
         }
         })
     } catch (err) {
-        data = {};
+        data = {bad: true};
         console.log(err);
     }
     // console.log(data);
