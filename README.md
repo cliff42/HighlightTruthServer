@@ -1,6 +1,6 @@
 # htn
 
-This is the Backend of the Highlight Truth Chrome Extension.
+This is the Backend of the Highlight Truth Chrome Extension made for Hack the North 2021.
 
 It is hosted on: https://fake-news-htn.herokuapp.com
 
