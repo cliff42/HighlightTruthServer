@@ -15,7 +15,7 @@ let data = {};
 let hits = {value: -1};
 
 const sources = ["CNN", "NYTimes", "AP NEWS" , "Washington Post", "BBC News", "CBC", "Snopes.com"];
-const skipWords = ["and", "a", "the", "but", "did", "at", "in", "an", "all", "for", "of", "so", "this", "why", "do", "with", "from", "it"];
+const skipWords = ["and", "a", "the", "but", "did", "at", "in", "an", "all", "for", "of", "so", "this", "why", "do", "with", "from", "it", "by"];
 const superWords = ["not", "true", "false", "won", "win", "lost", "lose", "good", "bad"];
 
 const config = {
@@ -39,9 +39,16 @@ function cleanQueryForSearch(q) {
             skippedWord = false;
         }
     }
+    // for(var word of subArray) {
+    //     if (skipWords.includes(word)) {
+    //         // do nothing
+    //     } else {
+    //         query += '"' + word + '"';
+    //     }
+    // }
     query = query.substring(0, query.length - 1);
     query += "\"";
-    //console.log(query);
+    // console.log('THIS PART' + query);
     return query;
 }
 
