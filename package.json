@@ -5,8 +5,8 @@
   "main": "app.js",
   "author": "",
   "license": "ISC",
-  "start": "node app.js",
   "scripts": {
+    "start": "node app.js",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
