@@ -22,7 +22,7 @@ const config = {
     GCP_CX: process.env.GOOGLE_APPLICATION_CX
 }
 
-function cleanQuery(q) {
+function cleanQueryForSearch(q) {
     var subArray = q.split(" ");
     var query = "\"";
     var skippedWord = false;
@@ -40,29 +40,57 @@ function cleanQuery(q) {
     }
     query = query.substring(0, query.length - 1);
     query += "\"";
-    console.log(query);
+    //console.log(query);
     return query;
 }
 
-function searchSources(sitename, twitter_name) {
-    for(var s of sources) {
-        if (sitename != null && sitename.includes(s)) {
+function cleanQueryArray(q) {
+    var subArray = q.split("\"");
+    var newArray = [];
+    for(word of subArray) {
+        if (!skipWords.includes(word) && word != ' ' && word != '') {
+            newArray.push(word);
+        }
+    }
+    //console.log(newArray)
+    return newArray;
+}
+
+function checkQueryWithTitleAndSnippet(title, snippet, q) {
+    var count = 0;
+    var size = q.length;
+    for(word of q) {
+        if (title.includes(word) || snippet.includes(word)) {
+            count++;
+        }
+    }
+    if (size == 0) {
+        return false;
+    }
+    console.log(title, snippet, q, (count/size) >= 1)
+    return count/size >= 0.5;
+}
+
+function searchSources(sitename, twitter_name, title, snippet, q) {
+    var check = checkQueryWithTitleAndSnippet(title, snippet, q);
+    for(s of sources) {
+        if (sitename != null && sitename.includes(s) && check) {
             return true;
         }
-        if (twitter_name != null && twitter_name.includes(s)) {
+        if (twitter_name != null && twitter_name.includes(s) && check) {
             return true;
         }
     }
     return false;
 }
 
-function analyzeSearchResults() {
+function analyzeSearchResults(q) {
     //TODO
     var goodHits = 0;
-    console.log(data);
+    //console.log(data);
     if (!data.bad) {
-        for(var v of data.items){
-            if (searchSources(v.sitename, v.twitter_name)) {
+        for(v of data.items){
+            if (searchSources(v.sitename, v.twitter_name, v.title.toLowerCase(), v.snippet.toLowerCase(), q)) {
                 goodHits++;
             }
         }
@@ -75,13 +103,13 @@ function analyzeSearchResults() {
 async function getResult(req) {
     var goodHits = 0;
     var startNum = 1;
-    const query = cleanQuery(req.body.q);
+    const query = cleanQueryForSearch(req.body.q.toLowerCase());
     const numArticles = 100;
 
     for(var i = 0; i < 10; i++) {
         await getData(query, startNum);
         //console.log(data);
-        goodHits += analyzeSearchResults();
+        goodHits += analyzeSearchResults(cleanQueryArray(query));
         startNum += 10;
     }
     // DO CALCULATIONS HERE
