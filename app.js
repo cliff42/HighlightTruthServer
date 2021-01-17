@@ -104,7 +104,6 @@ async function getResult(req) {
     var goodHits = 0;
     var startNum = 1;
     var query = '';
-    console.log('QQQQQ' + req.body.q);
     if (req.body.q != undefined) {
         query = cleanQueryForSearch(req.body.q.toLowerCase());
     }
