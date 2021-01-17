@@ -15,10 +15,33 @@ let data = {};
 let hits = {value: -1};
 
 const sources = ["CNN", "NYTimes", "AP NEWS" , "Washington Post", "BBC News", "CBC", "Snopes.com"];
+const skipWords = ["and", "a", "the", "but", "did", "at", "in", "an", "all", "is", "for", "of", "has", "so", "this", "why", "do", "with", "from", "it"];
 
 const config = {
     GCP_API_KEY: process.env.GOOGLE_APPLICATION_CREDENTIALS,
     GCP_CX: process.env.GOOGLE_APPLICATION_CX
+}
+
+function cleanQuery(q) {
+    var subArray = q.split(" ");
+    var query = "\"";
+    var skippedWord = false;
+    for(word of subArray) {
+        if (skipWords.includes(word)) {
+            if(!skippedWord) {
+                query = query.substring(0, query.length - 1);
+                query += "\" \"";
+            }
+            skippedWord = true;
+        } else {
+            query += word + " ";
+            skippedWord = false;
+        }
+    }
+    query = query.substring(0, query.length - 1);
+    query += "\"";
+    console.log(query);
+    return query;
 }
 
 function searchSources(sitename, twitter_name) {
@@ -52,7 +75,7 @@ function analyzeSearchResults() {
 async function getResult(req) {
     var goodHits = 0;
     var startNum = 1;
-    const query = req.body.q;
+    const query = cleanQuery(req.body.q);
     const numArticles = 100;
 
     for(i = 0; i < 10; i++) {
@@ -117,6 +140,7 @@ async function getData(query, begin) {
                 sitename: o.pagemap.metatags[0]["og:site_name"],
                 twitter_name: o.pagemap.metatags[0]["twitter:app:name:googleplay"],
                 snippet: o.snippet,
+                title: o.title,
                 }))
             };
         } else {
