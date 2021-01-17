@@ -157,7 +157,7 @@ async function getData(query, begin) {
         const previousPage = (queries.previousPage || [])[0] || {};
         const nextPage = (queries.nextPage || [])[0] || {};
 
-        if (items != undefined && items.pagemap != undefined) {
+        if (items != undefined) {
             data = {
                 q,
                 bad: false,
