@@ -28,28 +28,28 @@ const config = {
 function cleanQueryForSearch(q) {
     var subArray = q.split(" ");
     var query = "\"";
-    var skippedWord = false;
-    for(var word of subArray) {
-        if (skipWords.includes(word)) {
-            if(!skippedWord) {
-                query = query.substring(0, query.length - 1);
-                query += "\" \"";
-            }
-            skippedWord = true;
-        } else {
-            query += word + " ";
-            skippedWord = false;
-        }
-    }
+    // var skippedWord = false;
     // for(var word of subArray) {
     //     if (skipWords.includes(word)) {
-    //         // do nothing
+    //         if(!skippedWord) {
+    //             query = query.substring(0, query.length - 1);
+    //             query += "\" \"";
+    //         }
+    //         skippedWord = true;
     //     } else {
-    //         query += '"' + word + '"';
+    //         query += word + " ";
+    //         skippedWord = false;
     //     }
     // }
-    query = query.substring(0, query.length - 1);
-    query += "\"";
+    for(var word of subArray) {
+        if (skipWords.includes(word)) {
+            // do nothing
+        } else {
+            query += '"' + word + '"';
+        }
+    }
+    // query = query.substring(0, query.length - 1);
+    // query += "\"";
     // console.log('THIS PART' + query);
     return query;
 }
