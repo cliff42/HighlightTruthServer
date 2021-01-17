@@ -104,6 +104,7 @@ async function getResult(req) {
     var goodHits = 0;
     var startNum = 1;
     var query = '';
+    console.log('QQQQQ' + req.body.q);
     if (req.body.q != undefined) {
         query = cleanQueryForSearch(req.body.q.toLowerCase());
     }
@@ -194,7 +195,7 @@ app.post('/postText', async (req, res) => {
         await getResult(req);
         res.status(200).send(hits);
     } catch (err) {
-        console.log('ARSDASDADASD' + err);
+        console.log(err);
         res.status(500).send(err);
     }
 
