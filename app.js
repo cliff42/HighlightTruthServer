@@ -106,7 +106,7 @@ async function getResult(req) {
     var query = '';
     console.log('QQQQQ' + req.body.q);
     if (req.body.q != undefined) {
-        query = cleanQueryForSearch(String.req.body.q.toLowerCase());
+        query = cleanQueryForSearch(req.body.q.toLowerCase());
     }
     const numArticles = 100;
 
