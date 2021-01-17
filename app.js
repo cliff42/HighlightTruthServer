@@ -72,6 +72,7 @@ function checkFailWords(title, snippet) {
         }
     }
     return false;
+    //comment
 }
 
 function checkQueryWithTitleAndSnippet(title, snippet, q) {
