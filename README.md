@@ -1,4 +1,4 @@
-# htn
+# HighlightTruthServer
 
 This is the Backend of the Highlight Truth Chrome Extension made for Hack the North 2021.
 
