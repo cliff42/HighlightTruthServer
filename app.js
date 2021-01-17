@@ -171,5 +171,6 @@ app.post('/postText', async (req, res) => {
 
 
 // ----------------------------------------------------------------------------------------
-const PORT = process.env.SERVER_PORT;
+// const PORT = process.env.SERVER_PORT;
+const PORT = 4000;
 app.listen(PORT, () => console.log(`server listening on port ${PORT}`));
