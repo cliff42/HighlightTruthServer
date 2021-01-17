@@ -16,7 +16,8 @@ let hits = {value: -1};
 
 const sources = ["CNN", "NYTimes", "AP NEWS" , "Washington Post", "BBC News", "CBC", "Snopes.com"];
 const skipWords = ["and", "a", "the", "but", "did", "at", "in", "an", "all", "for", "of", "so", "this", "why", "do", "with", "from", "it", "by"];
-const superWords = ["not", "true", "false", "won", "win", "lost", "lose", "good", "bad"];
+//const superWords = ["not", "true", "false", "won", "win", "lost", "lose", "good", "bad"];
+const failWords = ["proven false", "not true", "fake", "disputed", "did not happen", "allegations", "allegation","disproven", "baseless", "no evidence", "speculated", "photoshopped", "claims"];
 
 const config = {
     GCP_API_KEY: 'AIzaSyAyFKaf_PlkioY6Gf1KRBm9g3XptWtdtjo',
@@ -64,22 +65,33 @@ function cleanQueryArray(q) {
     return newArray;
 }
 
+function checkFailWords(title, snippet) {
+    for (var word of failWords) {
+        if (title.includes(word) || snippet.includes(word)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function checkQueryWithTitleAndSnippet(title, snippet, q) {
     var count = 0;
     var size = q.length;
+
+    if(checkFailWords(title, snippet)) {
+        console.log(title, snippet, q, "FAILED");
+        return false;
+    }
     for(var word of q) {
         if (title.includes(word) || snippet.includes(word)) {
             count++;
-            if (superWords.includes(word) && q.includes(word)) {
-                count++;
-            }
         }
     }
     if (size == 0) {
         return false;
     }
-    console.log(title, snippet, q, (count/size) >= 1)
-    return count/size >= 0.5;
+    console.log(title, snippet, q, (count/size) >= 0.7)
+    return count/size >= 0.7;
 }
 
 function searchSources(sitename, twitter_name, title, snippet, q) {
@@ -150,7 +162,7 @@ async function getData(query, begin) {
     const q = query;
     const start = begin;
     const num = 10;
-    console.log(q, start, num);
+    //console.log(q, start, num);
 
     try {
 
