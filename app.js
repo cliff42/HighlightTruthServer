@@ -12,10 +12,11 @@ app.use(bodyParser.json());
 const customsearch = google.customsearch('v1');
 
 let data = {};
-let hits = {value: -1};
+let hits = {value: -1,
+            percentage: 0};
 
 const sources = ["CNN", "NYTimes", "AP NEWS" , "Washington Post", "BBC News", "CBC", "Snopes.com"];
-const skipWords = ["and", "a", "the", "but", "did", "at", "in", "an", "all", "for", "of", "so", "this", "why", "do", "with", "from", "it", "by"];
+const skipWords = ["and", "a", "the", "but", "did", "at", "in", "an", "all", "for", "of", "so", "this", "why", "do", "with", "from", "it", "by", "also"];
 //const superWords = ["not", "true", "false", "won", "win", "lost", "lose", "good", "bad"];
 const failWords = ["proven false", "not true", "fake", "disputed", "did not happen", "allegations", "allegation","disproven", "baseless", "no evidence", "speculated", "photoshopped", "claims"];
 
@@ -27,28 +28,28 @@ const config = {
 function cleanQueryForSearch(q) {
     var subArray = q.split(" ");
     var query = "\"";
-    var skippedWord = false;
-    for(var word of subArray) {
-        if (skipWords.includes(word)) {
-            if(!skippedWord) {
-                query = query.substring(0, query.length - 1);
-                query += "\" \"";
-            }
-            skippedWord = true;
-        } else {
-            query += word + " ";
-            skippedWord = false;
-        }
-    }
+    // var skippedWord = false;
     // for(var word of subArray) {
     //     if (skipWords.includes(word)) {
-    //         // do nothing
+    //         if(!skippedWord) {
+    //             query = query.substring(0, query.length - 1);
+    //             query += "\" \"";
+    //         }
+    //         skippedWord = true;
     //     } else {
-    //         query += '"' + word + '"';
+    //         query += word + " ";
+    //         skippedWord = false;
     //     }
     // }
-    query = query.substring(0, query.length - 1);
-    query += "\"";
+    for(var word of subArray) {
+        if (skipWords.includes(word)) {
+            // do nothing
+        } else {
+            query += '"' + word + '"';
+        }
+    }
+    // query = query.substring(0, query.length - 1);
+    // query += "\"";
     // console.log('THIS PART' + query);
     return query;
 }
@@ -141,6 +142,7 @@ async function getResult(req) {
     }
     // DO CALCULATIONS HERE
     console.log(goodHits);
+    hits.percentage = goodHits;
     var percentage = goodHits/numArticles;
     if (percentage < 0.0) {
         hits.value = 'No Data - Please Highlight Something Else';
@@ -155,7 +157,7 @@ async function getResult(req) {
     } else {
         hits.value = 4;
     }
-    console.log(hits.value);
+    console.log(hits.value, hits.percentage);
 }
 
 async function getData(query, begin) {
