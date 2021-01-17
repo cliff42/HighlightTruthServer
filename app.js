@@ -18,8 +18,8 @@ const sources = ["CNN", "NYTimes", "AP NEWS" , "Washington Post", "BBC News", "C
 const skipWords = ["and", "a", "the", "but", "did", "at", "in", "an", "all", "is", "for", "of", "has", "so", "this", "why", "do", "with", "from", "it"];
 
 const config = {
-    GCP_API_KEY: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-    GCP_CX: process.env.GOOGLE_APPLICATION_CX
+    GCP_API_KEY: 'AIzaSyAyFKaf_PlkioY6Gf1KRBm9g3XptWtdtjo',
+    GCP_CX: '2dadced1c6a3865a0'
 }
 
 function cleanQueryForSearch(q) {
