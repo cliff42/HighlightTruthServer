@@ -103,7 +103,10 @@ function analyzeSearchResults(q) {
 async function getResult(req) {
     var goodHits = 0;
     var startNum = 1;
-    const query = cleanQueryForSearch(req.body.q.toLowerCase());
+    var query = '';
+    if (req.body.q != undefined) {
+        query = cleanQueryForSearch(req.body.q.toLowerCase());
+    }
     const numArticles = 100;
 
     for(var i = 0; i < 10; i++) {
@@ -191,7 +194,7 @@ app.post('/postText', async (req, res) => {
         await getResult(req);
         res.status(200).send(hits);
     } catch (err) {
-        console.log(err);
+        console.log('ARSDASDADASD' + err);
         res.status(500).send(err);
     }
 
