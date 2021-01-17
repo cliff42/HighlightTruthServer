@@ -142,7 +142,7 @@ async function getResult(req) {
     console.log(goodHits);
     var percentage = goodHits/numArticles;
     if (percentage < 0.0) {
-        hits.value = 'No Data - Please Enter Something Else';
+        hits.value = 'No Data - Please Highlight Something Else';
     } else if (percentage <= 0.2) {
         hits.value = 0;
     } else if (percentage <= 0.4) {
