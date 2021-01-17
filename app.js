@@ -47,7 +47,7 @@ function cleanQueryForSearch(q) {
 function cleanQueryArray(q) {
     var subArray = q.split("\"");
     var newArray = [];
-    for(word of subArray) {
+    for(var word of subArray) {
         if (!skipWords.includes(word) && word != ' ' && word != '') {
             newArray.push(word);
         }
@@ -59,7 +59,7 @@ function cleanQueryArray(q) {
 function checkQueryWithTitleAndSnippet(title, snippet, q) {
     var count = 0;
     var size = q.length;
-    for(word of q) {
+    for(var word of q) {
         if (title.includes(word) || snippet.includes(word)) {
             count++;
         }
@@ -73,7 +73,7 @@ function checkQueryWithTitleAndSnippet(title, snippet, q) {
 
 function searchSources(sitename, twitter_name, title, snippet, q) {
     var check = checkQueryWithTitleAndSnippet(title, snippet, q);
-    for(s of sources) {
+    for(var s of sources) {
         if (sitename != null && sitename.includes(s) && check) {
             return true;
         }
@@ -89,7 +89,7 @@ function analyzeSearchResults(q) {
     var goodHits = 0;
     //console.log(data);
     if (!data.bad) {
-        for(v of data.items){
+        for(var v of data.items){
             if (searchSources(v.sitename, v.twitter_name, v.title.toLowerCase(), v.snippet.toLowerCase(), q)) {
                 goodHits++;
             }
@@ -199,6 +199,6 @@ app.post('/postText', async (req, res) => {
 
 
 // ----------------------------------------------------------------------------------------
-// const PORT = process.env.SERVER_PORT;
-const PORT = 4000;
+const PORT = process.env.PORT;
+// const PORT = 4000;
 app.listen(PORT, () => console.log(`server listening on port ${PORT}`));
