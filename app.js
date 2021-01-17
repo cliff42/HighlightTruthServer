@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require("body-parser");
 const cors = require('cors');
-const fs = require('fs');
+//const fs = require('fs');
 const { google } = require('googleapis');
 
 const app = express();
@@ -26,7 +26,7 @@ function cleanQueryForSearch(q) {
     var subArray = q.split(" ");
     var query = "\"";
     var skippedWord = false;
-    for(word of subArray) {
+    for(var word of subArray) {
         if (skipWords.includes(word)) {
             if(!skippedWord) {
                 query = query.substring(0, query.length - 1);
@@ -106,7 +106,7 @@ async function getResult(req) {
     const query = cleanQueryForSearch(req.body.q.toLowerCase());
     const numArticles = 100;
 
-    for(i = 0; i < 10; i++) {
+    for(var i = 0; i < 10; i++) {
         await getData(query, startNum);
         //console.log(data);
         goodHits += analyzeSearchResults(cleanQueryArray(query));
@@ -199,5 +199,6 @@ app.post('/postText', async (req, res) => {
 
 
 // ----------------------------------------------------------------------------------------
-const PORT = process.env.SERVER_PORT;
+// const PORT = process.env.SERVER_PORT;
+const PORT = 4000;
 app.listen(PORT, () => console.log(`server listening on port ${PORT}`));
