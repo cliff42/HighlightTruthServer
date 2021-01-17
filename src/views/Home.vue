@@ -43,7 +43,7 @@ export default {
                 console.log(err);
                 message.value = err;
             }
-        };
+        }
 
         return {
             text,
