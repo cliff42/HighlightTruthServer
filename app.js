@@ -15,7 +15,8 @@ let data = {};
 let hits = {value: -1};
 
 const sources = ["CNN", "NYTimes", "AP NEWS" , "Washington Post", "BBC News", "CBC", "Snopes.com"];
-const skipWords = ["and", "a", "the", "but", "did", "at", "in", "an", "all", "is", "for", "of", "has", "so", "this", "why", "do", "with", "from", "it"];
+const skipWords = ["and", "a", "the", "but", "did", "at", "in", "an", "all", "for", "of", "so", "this", "why", "do", "with", "from", "it"];
+const superWords = ["not", "true", "false", "won", "win", "lost", "lose", "good", "bad"];
 
 const config = {
     GCP_API_KEY: 'AIzaSyAyFKaf_PlkioY6Gf1KRBm9g3XptWtdtjo',
@@ -62,6 +63,9 @@ function checkQueryWithTitleAndSnippet(title, snippet, q) {
     for(var word of q) {
         if (title.includes(word) || snippet.includes(word)) {
             count++;
+            if (superWords.includes(word) && q.includes(word)) {
+                count++;
+            }
         }
     }
     if (size == 0) {
